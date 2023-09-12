@@ -8,19 +8,22 @@ using UnityEngine.UI;
 using DG.Tweening;
 
 
-public class RadicalMenuEntry : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+public class RadicalMenuEntry : MonoBehaviour, IPointerEnterHandler,IPointerClickHandler, IPointerExitHandler
 {
     [SerializeField] private TextMeshProUGUI label;
     [SerializeField] private Image logo;
     [SerializeField] private RectTransform rect;
-    [SerializeField] private TextMeshProUGUI currentWeaponText;
+    [SerializeField] private TextMeshProUGUI currentWeaponTextObj;
     [SerializeField] private Image thisObj;
     [SerializeField] private float fadeTime = 0.1f;
+    
+    [Header("선택한 버튼의 Index")]
+    private int buttonIndex;
 
     
     private void OnEnable()
     {
-        currentWeaponText = GameObject.FindGameObjectWithTag("PieUIText").GetComponent<TextMeshProUGUI>();
+        //currentWeaponTextObj = GameObject.FindGameObjectWithTag("PieUIText").GetComponent<TextMeshProUGUI>();
     }
 
     public void SetLabel(string pText)
@@ -33,17 +36,20 @@ public class RadicalMenuEntry : MonoBehaviour, IPointerClickHandler, IPointerEnt
         logo.sprite = image;
     }
 
+    public void SetTextObj(TextMeshProUGUI text)
+    {
+        currentWeaponTextObj = text;
+    }
+
     
     public void DoFadeIn(Sprite img)
     {
-//        logo.DOFade(1.0f, fadeTime);
         thisObj.DOFade(1.0f, fadeTime).onComplete =
             delegate
             {
                 SetIcon(img);
                 logo.DOFade(1.0f, fadeTime);
             };
-        
     }
     public void DoFadeOut()
     {
@@ -54,21 +60,29 @@ public class RadicalMenuEntry : MonoBehaviour, IPointerClickHandler, IPointerEnt
         }
         ;
     }
-    
-    public void OnPointerClick(PointerEventData eventData)
+
+    public int IndexFunc
     {
+        get { return buttonIndex; }
+        set { buttonIndex = value; }
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+
+
+    public void OnPointerClick(PointerEventData eventData)
     {
+        currentWeaponTextObj.text = "Test"; 
+            //label.text;
         rect.DOComplete();
-        //rect.DOScale(Vector3.one * 1.5f, .3f).SetEase(Ease.OutQuad);
-        currentWeaponText.text = label.text;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         rect.DOComplete();
-        //rect.DOScale(Vector3.one, .3f).SetEase(Ease.OutQuad);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        currentWeaponTextObj.text = buttonIndex.ToString();
     }
 }
