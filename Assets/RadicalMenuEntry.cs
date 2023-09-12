@@ -14,8 +14,10 @@ public class RadicalMenuEntry : MonoBehaviour, IPointerClickHandler, IPointerEnt
     [SerializeField] private Image logo;
     [SerializeField] private RectTransform rect;
     [SerializeField] private TextMeshProUGUI currentWeaponText;
-    //[SerializeField] private
+    [SerializeField] private Image thisObj;
+    [SerializeField] private float fadeTime = 0.1f;
 
+    
     private void OnEnable()
     {
         currentWeaponText = GameObject.FindGameObjectWithTag("PieUIText").GetComponent<TextMeshProUGUI>();
@@ -26,16 +28,32 @@ public class RadicalMenuEntry : MonoBehaviour, IPointerClickHandler, IPointerEnt
         label.text = pText;
     }
 
-    public void SetIcon(Sprite image)
+    void SetIcon(Sprite image)
     {
         logo.sprite = image;
     }
 
-    public Image GetIcon()
-    {
-        return logo;
-    }
     
+    public void DoFadeIn(Sprite img)
+    {
+//        logo.DOFade(1.0f, fadeTime);
+        thisObj.DOFade(1.0f, fadeTime).onComplete =
+            delegate
+            {
+                SetIcon(img);
+                logo.DOFade(1.0f, fadeTime);
+            };
+        
+    }
+    public void DoFadeOut()
+    {
+        logo.DOFade(0f, fadeTime).onComplete = 
+            delegate
+        {
+            Destroy(this.gameObject);
+        }
+        ;
+    }
     
     public void OnPointerClick(PointerEventData eventData)
     {
