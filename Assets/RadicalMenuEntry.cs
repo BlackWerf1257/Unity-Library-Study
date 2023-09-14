@@ -10,27 +10,32 @@ using DG.Tweening;
 
 public class RadicalMenuEntry : MonoBehaviour, IPointerEnterHandler,IPointerClickHandler, IPointerExitHandler
 {
-    [SerializeField] private TextMeshProUGUI label;
     [SerializeField] private Image logo;
     [SerializeField] private RectTransform rect;
     [SerializeField] private TextMeshProUGUI currentWeaponTextObj;
     [SerializeField] private Image thisObj;
-    [SerializeField] private float fadeTime = 0.1f;
+    [SerializeField] private float fadeTime = 10f;
+
+    [SerializeField] private GameObject parentObj;
+    private RadicalMenu parentScriptObj;
     
     [Header("선택한 버튼의 Index")]
     private int buttonIndex;
 
+    [Tooltip("아이템의 이름")] 
+    private string itemName;
+
     
     private void OnEnable()
     {
-        //currentWeaponTextObj = GameObject.FindGameObjectWithTag("PieUIText").GetComponent<TextMeshProUGUI>();
+        parentScriptObj = parentObj.GetComponent<RadicalMenu>();
     }
 
-    public void SetLabel(string pText)
+    public string SetItemName(string name)
     {
-        label.text = pText;
+        Debug.Log(name);
+        return itemName = name;
     }
-
     void SetIcon(Sprite image)
     {
         logo.sprite = image;
@@ -44,10 +49,13 @@ public class RadicalMenuEntry : MonoBehaviour, IPointerEnterHandler,IPointerClic
     
     public void DoFadeIn(Sprite img)
     {
+        SetIcon(img);
         thisObj.DOFade(1.0f, fadeTime).onComplete =
             delegate
             {
-                SetIcon(img);
+                logo.enabled = true;
+                logo.DOFillAmount(1.0f, fadeTime);
+                thisObj.DOFillAmount(1.0f, fadeTime);
                 logo.DOFade(1.0f, fadeTime);
             };
     }
@@ -84,5 +92,6 @@ public class RadicalMenuEntry : MonoBehaviour, IPointerEnterHandler,IPointerClic
     public void OnPointerEnter(PointerEventData eventData)
     {
         currentWeaponTextObj.text = buttonIndex.ToString();
+        parentScriptObj.CurrentIndexUpdate(buttonIndex);
     }
 }

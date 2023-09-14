@@ -50,7 +50,7 @@ public class RadicalMenu : MonoBehaviour
         rme.SetTextObj(currentSelectedWeaponText);
         rme.IndexFunc = objectIndex;
 
-        rme.SetLabel(pLabel);
+        rme.SetItemName(pLabel);
         entries.Add(rme);
     }
 
@@ -83,6 +83,12 @@ public class RadicalMenu : MonoBehaviour
     {
         if(entries.Count != 0)
             Close();
+    }
+
+    public int CurrentIndexUpdate(int index)
+    {
+        Debug.Log("Selected Index: " + index);
+        return selectedIndex = index;
     }
 
  
