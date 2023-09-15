@@ -33,7 +33,6 @@ public class RadicalMenuEntry : MonoBehaviour, IPointerEnterHandler,IPointerClic
 
     public string SetItemName(string name)
     {
-        Debug.Log(name);
         return itemName = name;
     }
     void SetIcon(Sprite image)
@@ -93,5 +92,6 @@ public class RadicalMenuEntry : MonoBehaviour, IPointerEnterHandler,IPointerClic
     {
         currentWeaponTextObj.text = buttonIndex.ToString();
         parentScriptObj.CurrentIndexUpdate(buttonIndex);
+        Debug.Log("Selected Index from Child Button : " + IndexFunc);
     }
 }

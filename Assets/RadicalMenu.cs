@@ -17,27 +17,38 @@ public class RadicalMenu : MonoBehaviour
     [SerializeField] private TextMeshProUGUI currentSelectedWeaponText;
     
     private List<RadicalMenuEntry> entries;
-    public InputActionAsset ply;
     private bool isButtonOn = false;
 
     [Header("무기 선택 버튼 UI")] 
     [SerializeField]  private GameObject[] ButtonItemObj;
 
-
+    
     [Header("무기 아이콘")]
     [SerializeField] private List<Sprite> imageList;
 
     [SerializeField] private float radius = 300f;
     [Range(1,4)]
     [SerializeField] private int buttonCount;
-
+    
+    
+    InputMaps inputAction;
+    private InputAction inputMove;
+    private float angle = 0;
     private int selectedIndex;
+    [Tooltip("각 버튼별 간격")]
+    private int buttonAngle;
 
 
     // Start is called before the first frame update
     void Start()
     {
         entries = new List<RadicalMenuEntry>();
+
+        inputAction = new InputMaps();
+        inputMove =  inputAction.Test.Move;
+        inputMove.Enable();
+
+        buttonAngle = 360 / buttonCount;
     }
 
     void AddEntry(string pLabel, Sprite img, int objectIndex)
@@ -105,26 +116,34 @@ public class RadicalMenu : MonoBehaviour
         }
     }
 
-
-    private void Update()
+    public void OnFire(InputAction.CallbackContext context)
     {
-        ply.FindAction("Fire").performed +=
-            context =>
-            {
-                if(context.interaction is HoldInteraction)
-                    Open();
-            };
-        ply.FindAction("Fire").canceled +=
-            context =>
-            {
-                if (isButtonOn)
-                    Close();
-            };
+        if (context.performed && context.interaction is HoldInteraction)
+        {
+                Open();
+        }
+        
+        if (context.canceled)
+        {
+            if (isButtonOn)
+                Close();
+        }
+    }
 
-        ply.FindAction("Confirm").performed +=
-            context =>
-            {
-                Debug.Log(selectedIndex);
-            };
+    public void OnConfirm(InputAction.CallbackContext context)
+    {
+        Debug.Log(selectedIndex);
+    }
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        angle = Mathf.Atan2 (context.ReadValue<Vector2>().y, inputMove.ReadValue<Vector2>().x) * Mathf.Rad2Deg;
+        if (angle < 0)  angle += 360;
+        
+        //if(angle != 0) Debug.Log(angle);
+        
+        selectedIndex = Mathf.RoundToInt(angle / buttonAngle);
+        selectedIndex = Mathf.Clamp(selectedIndex, 0, buttonCount - 1);
+        
+        Debug.Log("Selected Index from Menu Script : " + selectedIndex);
     }
 }
