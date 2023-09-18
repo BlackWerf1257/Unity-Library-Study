@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -8,6 +9,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
+using UnityEngine.UIElements;
 
 public class RadicalMenu : MonoBehaviour
 {
@@ -28,8 +30,8 @@ public class RadicalMenu : MonoBehaviour
     [SerializeField] private List<Sprite> imageList;
 
     [SerializeField] private float radius = 300f;
-    [Range(1,4)]
-    [SerializeField] private int buttonCount;
+    
+    int buttonCount;
 
     [SerializeField] private Transform arrowObj;
 
@@ -43,15 +45,29 @@ public class RadicalMenu : MonoBehaviour
     [Tooltip("각 버튼별 간격")]
     private int buttonAngle;
 
+    private Vector2 radlength, moveLocalPos;
+    private Vector2 thisVec2Pos;
+
+
+    public int SetButtonCount(int count)
+    {
+        return buttonCount = count;
+    }
 
     // Start is called before the first frame update
     void Start()
     {
         entries = new List<RadicalMenuEntry>();
+        radlength = new Vector2(0, radius / 2);
+        moveLocalPos = (Vector2)this.transform.localPosition + radlength;
 
+        ArrowTransVoid().Forget();
+        MouseAngleVoid().Forget();
         Open();
         
         buttonAngle = 360 / buttonCount;
+
+        thisVec2Pos = this.transform.localPosition;
     }
 
 
@@ -161,20 +177,59 @@ public class RadicalMenu : MonoBehaviour
     {
         Debug.Log(selectedIndex);
     }
-    public void OnMove(InputAction.CallbackContext context)
+   
+
+    public void MoveVectorVoid(InputAction.CallbackContext context)
     {
-        angle = Mathf.Atan2 (context.ReadValue<Vector2>().y, inputMove.ReadValue<Vector2>().x) * Mathf.Rad2Deg;
-        if (angle < 0)  angle += 360;
-        angle -= 90;
+         angle = Mathf.Atan2(context.ReadValue<Vector2>().y, context.ReadValue<Vector2>().x) * Mathf.Rad2Deg;
+        if (angle < 0)
+            angle += 360;
         
-        selectedIndex = Mathf.RoundToInt(angle / buttonAngle);
-        selectedIndex = Mathf.Clamp(selectedIndex, 0, buttonCount - 1);
         
-        Debug.Log("Selected Index from Menu Script : " + selectedIndex);
+        Debug.Log("Move Angle : " + angle);
+        AngleToIndex();
     }
 
-    private void Update()
+    async UniTaskVoid ArrowTransVoid()
     {
-        arrowObj.eulerAngles = Vector3.forward * radius * angle;
+        var token = this.GetCancellationTokenOnDestroy();
+        while (true)
+        {
+            arrowObj.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            arrowObj.transform.localPosition = moveLocalPos;
+            
+            //arrowObj.eulerAngles = Vector3.forward * angle;
+            //arrowObj.localPosition = Vector3.zero + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * (radius / 2);
+            await UniTask.Delay(100);
+            await UniTask.Delay(100, cancellationToken: token);
+
+        }
+    }
+
+    async UniTaskVoid MouseAngleVoid()
+    {
+        var token = this.GetCancellationTokenOnDestroy();
+        while (true)
+        {
+            angle = Mathf.Atan2(Input.mousePosition.y - this.transform.position.y,
+                Input.mousePosition.x - this.transform.position.x) * Mathf.Rad2Deg;
+            
+            if (angle < 0)
+                angle += 360;
+            
+            await UniTask.Delay(10);
+            
+            AngleToIndex();
+            
+            await UniTask.Delay(100, cancellationToken: token);
+        }
+    }
+    void AngleToIndex()
+    {
+            selectedIndex = Mathf.RoundToInt(angle / buttonAngle);
+            selectedIndex = Mathf.Clamp(selectedIndex, 0, buttonCount - 1);
+
+            currentSelectedWeaponText.text = selectedIndex.ToString();
+            //Debug.Log("Selected Index from Menu Script : " + selectedIndex);
     }
 }
