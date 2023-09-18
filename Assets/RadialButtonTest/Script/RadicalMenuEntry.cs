@@ -88,7 +88,7 @@ public class RadicalMenuEntry : MonoBehaviour, IPointerEnterHandler,IPointerDown
         currentWeaponTextObj.text = "Test"; 
             //label.text;
             DoFadeOut();
-            Destroy(parentObj);
+            //Destroy(parentObj);
             
         rect.DOComplete();
     }

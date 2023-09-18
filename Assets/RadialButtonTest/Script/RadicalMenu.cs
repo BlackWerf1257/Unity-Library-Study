@@ -13,6 +13,7 @@ public class RadicalMenu : MonoBehaviour
 {
     [Tooltip("생성된 오브젝트 저장용")]    
     private List<GameObject> weaponObject = new List<GameObject>();
+    private List<RectTransform> weaponObjRect = new List<RectTransform>();
 
     [SerializeField] private TextMeshProUGUI currentSelectedWeaponText;
     
@@ -48,10 +49,6 @@ public class RadicalMenu : MonoBehaviour
     {
         entries = new List<RadicalMenuEntry>();
 
-        /*inputAction = new InputMaps();
-        inputMove =  inputAction.Test.Move;
-        inputMove.Enable();*/
-
         Open();
         
         buttonAngle = 360 / buttonCount;
@@ -76,6 +73,8 @@ public class RadicalMenu : MonoBehaviour
 
         rme.SetItemName(pLabel);
         entries.Add(rme);
+        
+        weaponObjRect.Add(weaponObject[objectIndex].GetComponent<RectTransform>());
     }
 
 
@@ -122,29 +121,41 @@ public class RadicalMenu : MonoBehaviour
 
     void ReArrange()
     {
-        float radiansOfSeperation = (Mathf.PI * 2) / entries.Count;
+        /*float radiansOfSeperation = (Mathf.PI * 2) / entries.Count;
         for (int i = 0; i < entries.Count; i++)
         {
             float x = Mathf.Sin(radiansOfSeperation * i) * radius;
             float y = Mathf.Cos(radiansOfSeperation * i) * radius;
 
             entries[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
+        }*/
+
+        switch (entries.Count)
+        {
+            case 1:
+            {
+                weaponObjRect[0].anchoredPosition = this.gameObject.transform.position;
+            } break;
+            case 2:
+            {
+                weaponObjRect[0].anchoredPosition = new Vector2(0, radius);
+                weaponObjRect[1].anchoredPosition = new Vector2(0, -radius);
+            } break;
+            case 3:
+            {
+                weaponObjRect[0].anchoredPosition = new Vector2(radius, radius);
+                weaponObjRect[1].anchoredPosition = new Vector2(-radius, radius);
+                weaponObjRect[2].anchoredPosition = new Vector2(0, -radius);
+            } break;
+            case 4:
+            {
+                weaponObjRect[0].anchoredPosition = new Vector2(radius, radius);
+                weaponObjRect[1].anchoredPosition = new Vector2(-radius, radius);
+                weaponObjRect[2].anchoredPosition = new Vector2(-radius, -radius);
+                weaponObjRect[3].anchoredPosition = new Vector2(radius, -radius);
+            } break;
         }
     }
-
-    /*public void OnFire(InputAction.CallbackContext context)
-    {
-        if (context.performed && context.interaction is HoldInteraction)
-        {
-                Open();
-        }
-        
-        if (context.canceled)
-        {
-            if (isButtonOn)
-                Close();
-        }
-    }*/
 
     public void OnConfirm(InputAction.CallbackContext context)
     {
@@ -164,6 +175,6 @@ public class RadicalMenu : MonoBehaviour
 
     private void Update()
     {
-        arrowObj.eulerAngles = Vector3.forward * angle;
+        arrowObj.eulerAngles = Vector3.forward * radius * angle;
     }
 }

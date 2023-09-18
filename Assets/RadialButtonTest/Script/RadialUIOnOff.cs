@@ -30,8 +30,8 @@ public class RadialUIOnOff : MonoBehaviour
         }
         if (context.canceled)
         {
-            if (isButtonOn)
-                Close();
+            /*if (isButtonOn)
+                Close();*/
         }
     }
     
@@ -40,10 +40,5 @@ public class RadialUIOnOff : MonoBehaviour
         radialObj = Instantiate(radialObjPrefab, this.transform.position, Quaternion.identity);
         radialObj.transform.SetParent(this.gameObject.transform);
         radialObj.GetComponent<RadicalMenu>().GetParentScript(this.GetComponent<RadialUIOnOff>());
-    }
-    void Close()
-    {
-        if(isButtonOn)
-            Destroy(radialObj);
     }
 }
