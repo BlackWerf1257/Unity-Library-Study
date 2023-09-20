@@ -150,12 +150,12 @@ public class RadicalMenu : MonoBehaviour
         {
             case 1:
             {
-                weaponObjRect[0].anchoredPosition = this.gameObject.transform.position;
+                weaponObjRect[0].anchoredPosition = this.gameObject.transform.localPosition;
             } break;
             case 2:
             {
-                weaponObjRect[0].anchoredPosition = new Vector2(0, radius);
-                weaponObjRect[1].anchoredPosition = new Vector2(0, -radius);
+                weaponObjRect[0].anchoredPosition = new Vector2(radius, 0);
+                weaponObjRect[1].anchoredPosition = new Vector2(-radius, 0);
             } break;
             case 3:
             {
@@ -219,8 +219,6 @@ public class RadicalMenu : MonoBehaviour
             
             await UniTask.Delay(10);
             
-            AngleToIndex();
-            
             await UniTask.Delay(100, cancellationToken: token);
         }
     }
@@ -231,5 +229,10 @@ public class RadicalMenu : MonoBehaviour
 
             currentSelectedWeaponText.text = selectedIndex.ToString();
             //Debug.Log("Selected Index from Menu Script : " + selectedIndex);
+    }
+
+    private void Update()
+    {
+        AngleToIndex();
     }
 }

@@ -684,6 +684,10 @@
  </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="V_Animation.csproj">
+      <Project>{f5166eb4-16ff-1a79-cdab-34cee9f05185}</Project>
+      <Name>V_Animation</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
