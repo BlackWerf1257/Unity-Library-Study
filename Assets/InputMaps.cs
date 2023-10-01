@@ -53,6 +53,15 @@ public partial class @InputMaps : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MouseMove"",
+                    ""type"": ""Value"",
+                    ""id"": ""feecfc5f-12b6-4853-b431-8dd3d2f3f528"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -93,6 +102,17 @@ public partial class @InputMaps : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""9bbdf472-a613-494a-86dc-fab42c49a634"",
                     ""path"": ""<XInputController>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Confirm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""42970895-df94-4bf4-8350-efacfc71b2f8"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -154,6 +174,17 @@ public partial class @InputMaps : IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eed55b0b-6b4c-442b-bb3b-4c24d8313814"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -165,6 +196,7 @@ public partial class @InputMaps : IInputActionCollection2, IDisposable
         m_Test_Fire = m_Test.FindAction("Fire", throwIfNotFound: true);
         m_Test_Confirm = m_Test.FindAction("Confirm", throwIfNotFound: true);
         m_Test_Move = m_Test.FindAction("Move", throwIfNotFound: true);
+        m_Test_MouseMove = m_Test.FindAction("MouseMove", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -227,6 +259,7 @@ public partial class @InputMaps : IInputActionCollection2, IDisposable
     private readonly InputAction m_Test_Fire;
     private readonly InputAction m_Test_Confirm;
     private readonly InputAction m_Test_Move;
+    private readonly InputAction m_Test_MouseMove;
     public struct TestActions
     {
         private @InputMaps m_Wrapper;
@@ -234,6 +267,7 @@ public partial class @InputMaps : IInputActionCollection2, IDisposable
         public InputAction @Fire => m_Wrapper.m_Test_Fire;
         public InputAction @Confirm => m_Wrapper.m_Test_Confirm;
         public InputAction @Move => m_Wrapper.m_Test_Move;
+        public InputAction @MouseMove => m_Wrapper.m_Test_MouseMove;
         public InputActionMap Get() { return m_Wrapper.m_Test; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -252,6 +286,9 @@ public partial class @InputMaps : IInputActionCollection2, IDisposable
                 @Move.started -= m_Wrapper.m_TestActionsCallbackInterface.OnMove;
                 @Move.performed -= m_Wrapper.m_TestActionsCallbackInterface.OnMove;
                 @Move.canceled -= m_Wrapper.m_TestActionsCallbackInterface.OnMove;
+                @MouseMove.started -= m_Wrapper.m_TestActionsCallbackInterface.OnMouseMove;
+                @MouseMove.performed -= m_Wrapper.m_TestActionsCallbackInterface.OnMouseMove;
+                @MouseMove.canceled -= m_Wrapper.m_TestActionsCallbackInterface.OnMouseMove;
             }
             m_Wrapper.m_TestActionsCallbackInterface = instance;
             if (instance != null)
@@ -265,6 +302,9 @@ public partial class @InputMaps : IInputActionCollection2, IDisposable
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
+                @MouseMove.started += instance.OnMouseMove;
+                @MouseMove.performed += instance.OnMouseMove;
+                @MouseMove.canceled += instance.OnMouseMove;
             }
         }
     }
@@ -274,5 +314,6 @@ public partial class @InputMaps : IInputActionCollection2, IDisposable
         void OnFire(InputAction.CallbackContext context);
         void OnConfirm(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
+        void OnMouseMove(InputAction.CallbackContext context);
     }
 }

@@ -14,7 +14,7 @@ public class RadialUIOnOff : MonoBehaviour
 
     private GameObject radialObj;
     [SerializeField] private GameObject radialObjPrefab;
-    public bool isButtonOn;
+    public bool isButtonOn = false;
     
     [Range(1,4)]
     [SerializeField] private int buttonCount = 4;
@@ -30,9 +30,13 @@ public class RadialUIOnOff : MonoBehaviour
     
     public void OnMove(InputAction.CallbackContext context)
     {
-        if(isButtonOn)
+        if (isButtonOn)
             radMenu.MoveVectorVoid(context);
-         
+    }
+    public void OnMouseMove(InputAction.CallbackContext context)
+    {
+        if (isButtonOn)
+            radMenu.MouseToAngle(context);
     }
 
     public void OnFire(InputAction.CallbackContext context)
@@ -45,7 +49,10 @@ public class RadialUIOnOff : MonoBehaviour
         if (context.canceled)
         {
             if (isButtonOn)
+            {
                 Close();
+                isButtonOn = false;
+            }
         }
     }
 
@@ -53,14 +60,17 @@ public class RadialUIOnOff : MonoBehaviour
     {
         radialObj = Instantiate(radialObjPrefab, this.transform.position, Quaternion.identity);
         radialObj.transform.SetParent(this.gameObject.transform);
-        radialObj.GetComponent<RadicalMenu>().GetParentScript(this.GetComponent<RadialUIOnOff>());
-
         radMenu = radialObj.GetComponent<RadicalMenu>();
+        radMenu.GetParentScript(this.GetComponent<RadialUIOnOff>());
         radMenu.SetButtonCount(buttonCount);
     }
 
     public void Close()
     {
-        Destroy(radialObj);
+        if (radialObj != null)
+        {
+            radMenu.Close();
+            Destroy(radialObj);
+        }
     }
 }

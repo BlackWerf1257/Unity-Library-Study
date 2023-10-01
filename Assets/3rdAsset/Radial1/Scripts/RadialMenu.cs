@@ -223,10 +223,14 @@ namespace Rito.RadialMenu_v1
                     // Arrow 회전 설정
                     _arrowRotationZ = -mousePC.Angle;
                     showArrow = true;
+                    
+                    //Debug.Log("마우스 각도 : " + _arrowRotationZ);
 
                     // 각도로부터 배열 인덱스 계산
                     float fIndex = (mousePC.Angle / 360f) * _pieceCount;
                     _selectedIndex = Mathf.RoundToInt(fIndex) % _pieceCount;
+                    
+                    Debug.Log(_selectedIndex);
                 }
 
                 // 선택된 조각 색상 변경

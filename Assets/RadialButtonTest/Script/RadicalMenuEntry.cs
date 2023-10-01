@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 
 
-public class RadicalMenuEntry : MonoBehaviour, IPointerEnterHandler,IPointerDownHandler, IPointerExitHandler
+public class RadicalMenuEntry : MonoBehaviour, IPointerEnterHandler,IPointerDownHandler
 {
     [SerializeField] private Image logo;
     [SerializeField] private RectTransform rect;
@@ -18,7 +18,6 @@ public class RadicalMenuEntry : MonoBehaviour, IPointerEnterHandler,IPointerDown
 
     [SerializeField] private GameObject parentObj;
     private RadicalMenu parentScriptObj;
-    private bool isButtonOn;
     
     [Header("선택한 버튼의 Index")]
     private int buttonIndex;
@@ -29,7 +28,8 @@ public class RadicalMenuEntry : MonoBehaviour, IPointerEnterHandler,IPointerDown
     
     private void OnEnable()
     {
-        parentScriptObj = parentObj.GetComponent<RadicalMenu>();
+        if(gameObject.activeSelf)
+            parentScriptObj = parentObj.GetComponent<RadicalMenu>();
     }
 
     public string SetItemName(string name)
@@ -41,10 +41,6 @@ public class RadicalMenuEntry : MonoBehaviour, IPointerEnterHandler,IPointerDown
         logo.sprite = image;
     }
 
-    public void ButtonBool(bool boolVar)
-    {
-        isButtonOn = boolVar;
-    }
 
     public void SetTextObj(TextMeshProUGUI text)
     {
@@ -54,24 +50,30 @@ public class RadicalMenuEntry : MonoBehaviour, IPointerEnterHandler,IPointerDown
     
     public void DoFadeIn(Sprite img)
     {
-        SetIcon(img);
-        thisObj.DOFade(1.0f, fadeTime).onComplete =
-            delegate
-            {
-                logo.enabled = true;
-                logo.DOFillAmount(1.0f, fadeTime);
-                thisObj.DOFillAmount(1.0f, fadeTime);
-                logo.DOFade(1.0f, fadeTime);
-            };
+        if (logo.gameObject.activeSelf)
+        {
+            SetIcon(img);
+            thisObj.DOFade(1.0f, fadeTime).onComplete =
+                delegate
+                {
+
+                    logo.enabled = true;
+                    logo.DOFillAmount(1.0f, fadeTime);
+                    thisObj.DOFillAmount(1.0f, fadeTime);
+                    logo.DOFade(1.0f, fadeTime);
+                };
+        }
     }
     public void DoFadeOut()
     {
-        logo.DOFade(0f, fadeTime).onComplete = 
-            delegate
+        if (gameObject.activeSelf)
         {
-            Destroy(this.gameObject);
+            logo.DOFade(0f, fadeTime).onComplete =
+                delegate
+                {
+                    RadicalMenu.closeAction.Invoke();
+                };
         }
-        ;
     }
 
 
@@ -81,27 +83,21 @@ public class RadicalMenuEntry : MonoBehaviour, IPointerEnterHandler,IPointerDown
         set { buttonIndex = value; }
     }
 
+    public string GetItemName()
+    {
+        return itemName;
+    }
+
 
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        currentWeaponTextObj.text = "Test"; 
-            //label.text;
             DoFadeOut();
-            //Destroy(parentObj);
-            
-        rect.DOComplete();
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        rect.DOComplete();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        currentWeaponTextObj.text = buttonIndex.ToString();
         parentScriptObj.CurrentIndexUpdate(buttonIndex);
-        Debug.Log("Selected Index from Child Button : " + IndexFunc);
+        currentWeaponTextObj.text = itemName; 
     }
 }

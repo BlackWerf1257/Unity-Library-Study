@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/HPBar/HP_Test.unity
+- path: Assets/RadialButtonTest/Radial_Test.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
